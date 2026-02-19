@@ -273,7 +273,7 @@ MonoBehaviour:
   treeTrunkColor: {r: 0.49056602, g: 0.25590324, b: 0.016197944, a: 0}
   leavesColor: {r: 0.3473558, g: 0.745283, b: 0.045701336, a: 0}
   sizeOfForest: 5
-  treeProximity: 15
+  treeProximity: 100
   stonesRequired: 0
   trees: []
   stones: []

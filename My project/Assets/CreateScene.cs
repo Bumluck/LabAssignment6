@@ -85,7 +85,7 @@ public class CreateScene : MonoBehaviour
             while (!clearProx)
             {
                 trunkCoords = new Vector3(Random.Range(-9.4f, 9.4f), .5f, Random.Range(-9.4f, 9.4f));
-                if (!Physics.CheckSphere(trunk.transform.position, treeProximity, 0))
+                if (!Physics.CheckSphere(trunkCoords, treeProximity, 0))
                 {
                     clearProx = true;
                 }
