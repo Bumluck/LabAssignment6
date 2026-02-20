@@ -26,12 +26,15 @@ public class CreateScene : MonoBehaviour
     public int sizeOfForest;
     public float treeProximity;
 
+
     [Header("Pyramid Settings")]
     public int stonesRequired;
     [Space]
     [Space]
     public GameObject[] trees;
     public GameObject[] stones;
+
+    public LayerMask layerMask;
 
     #endregion
 
@@ -45,6 +48,15 @@ public class CreateScene : MonoBehaviour
         CreateTrees(sizeOfForest);
     }
 
+    private void OnDrawGizmos()
+    {
+        for (int i = 0; i < trees.Length; i++)
+        {
+            Gizmos.DrawSphere(trees[i].transform.position, treeProximity);
+        }
+    }
+
+
     #endregion
 
     #region CREATE SCENE
@@ -54,9 +66,8 @@ public class CreateScene : MonoBehaviour
         GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
         ground.gameObject.name = "Ground";
         ground.GetComponent<MeshRenderer>().material.color = groundColor;
-        ground.layer = 1;
         ground.transform.position = Vector3.zero;
-        ground.transform.localScale = new Vector3(2, 1, 2);
+        ground.transform.localScale = new Vector3(5, 1, 5);
     }
 
     void CreateTrees(int sizeOfForest)
@@ -69,9 +80,14 @@ public class CreateScene : MonoBehaviour
             GameObject trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             trunk.transform.localScale = new Vector3(.375f, .5f, .375f);
             trunk.GetComponent<MeshRenderer>().material.color = treeTrunkColor;
+            trunk.layer = 3;
+            trunk.AddComponent<UpdateSphere>();
+            trunk.GetComponent<UpdateSphere>().radius = treeProximity;
+            trunk.GetComponent<UpdateSphere>().layerMask = layerMask;
 
             GameObject leaves = GameObject.CreatePrimitive(PrimitiveType.Cube);
             leaves.GetComponent<MeshRenderer>().material.color = leavesColor;
+            //leaves.layer = 3;
 
             leaves.transform.parent = trunk.transform;
             leaves.transform.localPosition = new Vector3(0, 2, 0);
@@ -80,19 +96,23 @@ public class CreateScene : MonoBehaviour
 
             trees[i] = trunk;
 
+            trunk.transform.position = new Vector3(0, -20, 0);
+
             bool clearProx = false;
             Vector3 trunkCoords = Vector3.zero;
-            while (!clearProx)
+            while (clearProx == false)
             {
-                trunkCoords = new Vector3(Random.Range(-9.4f, 9.4f), .5f, Random.Range(-9.4f, 9.4f));
-                if (!Physics.CheckSphere(trunkCoords, treeProximity, 0))
+                trunkCoords = new Vector3(Random.Range(-24.4f, 24.4f), .5f, Random.Range(-24.4f, 24.4f));
+                Debug.Log(trunkCoords);
+                Debug.Log(Physics.CheckSphere(trunkCoords, treeProximity, layerMask));
+                if (Physics.CheckSphere(trunkCoords, treeProximity, layerMask) == false)
                 {
                     clearProx = true;
+                    trunk.transform.position = trunkCoords;
+                    trunk.transform.parent = treeParentObject.transform;
+                    Debug.Log("clearProx = " + clearProx);
                 }
             }
-
-            trunk.transform.position = trunkCoords;
-            trunk.transform.parent = treeParentObject.transform;
         }
     }
 
