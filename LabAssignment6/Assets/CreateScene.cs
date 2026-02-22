@@ -31,15 +31,18 @@ public class CreateScene : MonoBehaviour
 
     [Header("Pyramid Settings - Grid Size (3 - 10)")]
     public int baseGridSize;
-    public LayerMask layerMask;
 
     [Header("Celestial Object Settings")]
     public float rotationSpeed;
+    public float dayNightDuration;
+    public Color dayColor;
+    public Color nightColor;
     [Space]
     [Space]
     public List<GameObject> trees;
     public List<GameObject> stones;
 
+    public Light directionalLight;
     #endregion
 
     #region MONOBEHAVIOUR FUNCTIONS
@@ -53,6 +56,8 @@ public class CreateScene : MonoBehaviour
         CreateTrees(sizeOfForest);
         CreatePyramid();
         SpawnObject();
+        directionalLight = FindAnyObjectByType<Light>();
+        StartCoroutine(DayNightCycle());
     }
 
     private void OnDrawGizmos()
@@ -94,6 +99,12 @@ public class CreateScene : MonoBehaviour
                 sizeOfForest = 50;
             }
         }
+
+        if (dayNightDuration <= 0)
+        {
+            Debug.Log("Day and Night Duration is invalid, setting duration to a default of 5");
+            dayNightDuration = 5;
+        }
     }
 
     void CreateGround()
@@ -109,7 +120,6 @@ public class CreateScene : MonoBehaviour
     {
         GameObject treeParentObject = new GameObject("Forest");
         treeParentObject.transform.position = Vector3.zero;
-        //trees = new GameObject[sizeOfForest];
         for (int i = 0; i < sizeOfForest; i++)
         {
             GameObject trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -223,11 +233,44 @@ public class CreateScene : MonoBehaviour
     {
         celestialObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         celestialObject.name = "CelestialObject";
+        celestialObject.transform.position = new Vector3(0, 10, 0);
+        celestialObject.transform.localScale = new Vector3(1.5f, 2, 1);
+        celestialObject.GetComponent<MeshRenderer>().material.color = dayColor;
     }
 
     public void RotateObject()
     {
         celestialObject.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+    }
+
+    IEnumerator DayNightCycle()
+    {
+        while (true)
+        {
+            // Transition from color1 to color2
+            yield return StartCoroutine(TransitionColor(dayColor, nightColor, dayNightDuration));
+
+            // Transition from color2 back to color1
+            yield return StartCoroutine(TransitionColor(nightColor, dayColor, dayNightDuration));
+        }
+    }
+
+    IEnumerator TransitionColor(Color startColor, Color endColor, float time)
+    {
+        float timer = 0.0f;
+
+        while (timer < time)
+        {
+            timer += Time.deltaTime;
+            // Use Lerp to smoothly interpolate between colors
+            directionalLight.color = Color.Lerp(startColor, endColor, timer / time);
+            celestialObject.GetComponent<MeshRenderer>().material.color = Color.Lerp(startColor, endColor, timer / time);
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure the final color is set precisely
+        directionalLight.color = endColor;
+        celestialObject.GetComponent<MeshRenderer>().material.color = endColor;
     }
 
     #endregion

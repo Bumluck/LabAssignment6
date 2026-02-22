@@ -269,17 +269,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b9e726e92aa9e34a9de5d9c1c68e0d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CreateScene
-  groundColor: {r: 0.8867924, g: 0.8867924, b: 0.8867924, a: 0}
+  groundColor: {r: 0.48931783, g: 0.8666667, b: 0.086274505, a: 0}
   treeTrunkColor: {r: 0.49056602, g: 0.25590324, b: 0.016197944, a: 0}
-  leavesColor: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 0}
-  sizeOfForest: 25
-  treeProximity: 6
+  leavesColor: {r: 0.3473558, g: 0.745283, b: 0.045701336, a: 0}
+  sizeOfForest: 50
+  treeProximity: 7
   dangerMode: 0
   baseGridSize: 7
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
   rotationSpeed: 200
   dayNightDuration: 5
+  emissionIntensity: 0
+  objectColor: {r: 0, g: 1, b: 0.43330193, a: 0}
   dayColor: {r: 1, g: 1, b: 1, a: 0}
-  nightColor: {r: 0.6390587, g: 0.07262372, b: 0.9056604, a: 0}
+  nightColor: {r: 0.79272175, g: 0, b: 1, a: 0}
   trees: []
   stones: []
   directionalLight: {fileID: 0}
